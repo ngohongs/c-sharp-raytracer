@@ -1,8 +1,23 @@
-# RT004
-Support for NPGR004 (Photorealistic graphics) lecture
+# Raytracer for course NPRG004 Photorealistic graphics
+author: Hong Son Ngo
 
-## Project plan
-Every ''StepNN'' directory refers to one item of the lab plan.
+## Usage
+- build project in .NET 6/7
+- run executable in terminal with command `rt004.exe <output image filename>`
+  - if filename is ommited the image is saved under `out.pfm`
+  - `rt004.exe` needs to be accompanied with config file `config.txt`
+    - parameters are in format `parameterName=value`
+    - recognized parameters: `width`, `height`
 
-## src
-The src directory contains support files from the lecturer
+## Checkpoint 1
+Checkpoint 1 project can be downloaded [here](https://github.com/ngohongs/nprg004/tree/9259b1e9b24ac6f29841a68adf9db90e4fd281f8)
+#### Step 1
+- git repository created in [here](https://github.com/ngohongs/nprg004)
+- documentation in [here](https://github.com/ngohongs/nprg004/README.md)
+- R/O permission added to user [@pepcape](https://github.com/pepcape/)
+#### Step 2
+- added optional parameter for output image filename
+- config file parse implemented using regex parse of `config.txt` file
+- logging/debugging system postponed
+#### Step 3
+- output image showing a period of a sine wave on blue/green gradient background  
