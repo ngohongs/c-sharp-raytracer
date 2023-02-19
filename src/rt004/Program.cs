@@ -7,6 +7,7 @@ namespace rt004
 {
     internal class Program
     {
+        static string[] MandatoryParameters = { "width", "height" };
         static Dictionary<string, string> ConfigLoad(string configFileName = "config.txt")
         {
             String textLines;
@@ -34,13 +35,20 @@ namespace rt004
 
             Dictionary<string, string> definedVariables = ConfigLoad();
 
+            foreach (string parameter in MandatoryParameters)
+            {
+                if (!definedVariables.ContainsKey(parameter))
+                {
+                    Console.WriteLine("Config file is invalid.");
+                    return 1;
+                }
+            }
+
             wid = Int32.Parse(definedVariables["width"]);
             hei = Int32.Parse(definedVariables["height"]);
 
-
             fileName = args.Length < 1 ? "out.pfm" : args[0] + ".pfm";
            
-
             // HDR image.
             FloatImage fi = new FloatImage(wid, hei, 3);
 
