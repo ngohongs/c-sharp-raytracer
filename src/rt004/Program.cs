@@ -1,5 +1,6 @@
 ﻿//using System.Numerics;
 
+using OpenTK.Mathematics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -48,22 +49,20 @@ namespace rt004
             hei = Int32.Parse(definedVariables["height"]);
 
             fileName = args.Length < 1 ? "out.pfm" : args[0] + ".pfm";
-           
+
             // HDR image.
             FloatImage fi = new FloatImage(wid, hei, 3);
 
-            for (int x = 0; x < wid; x++)
-            {
-                for (int y = 0; y < hei; y++)
-                {
-                    fi.PutPixel(x, y, new float[] { 0, x, y });
-                }
-            }
+            Camera camera = new Camera(new Vector3d(0, 0, 0), new Vector3d(0.0d, 0.0d, -1.0d), new Vector3d(0.0d, 1.0d, 0.0d), 60.0d, wid, hei);
 
-            for (int x = 0; x < 4 * wid; x++)
+            List<List<float[]>> framebuffer = camera.Render();
+
+            for (int y = 0; y < hei; y++)
             {
-                double y = hei / 2 * Math.Sin(2 * Math.PI * (x /(4.0f * wid))) + hei / 2;
-                fi.PutPixel(x / 4, (int)y, new float[] { 10 * x, 0, 10*x });
+                for (int x = 0; x < wid; x++)
+                {
+                    fi.PutPixel(x, y, framebuffer[x][y]);
+                }
             }
 
             //fi.SaveHDR(fileName);   // Doesn't work well yet...
