@@ -23,7 +23,7 @@ Checkpoint 1 project can be downloaded [here](https://github.com/ngohongs/nprg00
 - output image showing a period of a sine wave on blue/green gradient background  
 
 ## Checkpoint 2
-Checkpoint 1 project can be downloaded [here]()
+Checkpoint 1 project can be downloaded [here](https://github.com/ngohongs/nprg004/tree/19b8550bfa753590a3a1859e7f6fb25af22e411b/src/rt004)
 #### Step 4
 - created class Camera - perspective camera
 #### Step 5
