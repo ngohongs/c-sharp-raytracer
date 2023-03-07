@@ -13,7 +13,7 @@ author: Hong Son Ngo
 Checkpoint 1 project can be downloaded [here](https://github.com/ngohongs/nprg004/tree/be68e02708bdbadad413f0902dcecb7b3a8b21c3/src/rt004)
 #### Step 1
 - git repository created in [here](https://github.com/ngohongs/nprg004)
-- documentation in [here](https://github.com/ngohongs/nprg004/README.md)
+- documentation in [here](https://github.com/ngohongs/nprg004/blob/main/DOC.md)
 - R/O permission added to user [@pepcape](https://github.com/pepcape/)
 #### Step 2
 - added optional parameter for output image filename
