@@ -84,10 +84,10 @@ namespace rt004
         public Vector4d Trace(Ray ray, int depth)
         {
             RayHit hit = new RayHit();
-            if (!Raytracer.scene.Intersect(ray, ref hit))
+            if (!RayTracer.scene.Intersect(ray, ref hit))
                 return Vector4d.Zero;
 
-            return new Vector4d(Raytracer.brdf.Shade(hit), 1.0d); 
+            return new Vector4d(RayTracer.brdf.Shade(hit), 1.0d); 
         }
 
         private Ray CastRay(double x, double y)

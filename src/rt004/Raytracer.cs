@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace rt004
 {
-    internal static class Raytracer
+    internal static class RayTracer
     {
         public static bool initialized = false;
 
@@ -24,7 +24,7 @@ namespace rt004
 
         public static IBrdf brdf;
        
-        static Raytracer()
+        static RayTracer()
         {
             initialized = ConfigLoad();
             if (initialized)
@@ -49,7 +49,7 @@ namespace rt004
             {
                 StreamReader sr = new StreamReader(configFileName);
                 textLines = sr.ReadToEnd();
-                Raytracer.definedVariables = textLines.Split('\n')
+                RayTracer.definedVariables = textLines.Split('\n')
                                                     .Select(line => Regex.Match(line, "(.*)=(.*)"))
                                                     .ToDictionary(match => match.Groups[1].Value, match => match.Groups[2].Value);
                 sr.Close();
@@ -71,8 +71,8 @@ namespace rt004
         }
         public static void Setup()
         {
-            int wid = Int32.Parse(Raytracer.definedVariables["width"]);
-            int hei = Int32.Parse(Raytracer.definedVariables["height"]);
+            int wid = Int32.Parse(RayTracer.definedVariables["width"]);
+            int hei = Int32.Parse(RayTracer.definedVariables["height"]);
 
             camera = new Camera(new Vector3d(0, 0, 0), new Vector3d(0.0d, 0.0d, -1.0d), new Vector3d(0.0d, 1.0d, 0.0d), 60.0d, wid, hei);
 
@@ -124,13 +124,13 @@ namespace rt004
         }
         public static void OutputImage(string fileName)
         {
-            int wid = Int32.Parse(Raytracer.definedVariables["width"]);
-            int hei = Int32.Parse(Raytracer.definedVariables["height"]);
+            int wid = Int32.Parse(RayTracer.definedVariables["width"]);
+            int hei = Int32.Parse(RayTracer.definedVariables["height"]);
 
             // HDR image.
             FloatImage fi = new FloatImage(wid, hei, 3);
 
-            List<List<float[]>> framebuffer = Raytracer.camera.Render();
+            List<List<float[]>> framebuffer = RayTracer.camera.Render();
 
             for (int y = 0; y < hei; y++)
             {

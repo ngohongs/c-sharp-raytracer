@@ -28,7 +28,7 @@ namespace rt004
 
                 hitSomething = true;
 
-                double tempDistance = Vector3d.Distance(temp.position, Raytracer.camera.GetPosition());
+                double tempDistance = Vector3d.Distance(temp.position, RayTracer.camera.GetPosition());
 
                 if (closestDistance > tempDistance)
                 {
