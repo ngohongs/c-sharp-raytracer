@@ -23,15 +23,15 @@ Checkpoint 1 project can be downloaded [here](https://github.com/ngohongs/nprg00
 - output image showing a period of a sine wave on blue/green gradient background  
 
 ## Checkpoint 2
-Checkpoint 1 project can be downloaded [here]()
+Checkpoint 2 project can be downloaded [here](https://github.com/ngohongs/nprg004/tree/checkpoint-2/src/rt004)
 #### Step 4
 - created class Camera - perspective camera
 #### Step 5
-- added a sphere and a plane as the two selected solids
+- added a sphere and a plane as the two selected solids 
 #### Step 6
-- in Camera's method `Render()` Phong Shading model is hardcoded 
+- class Phong computes Phong's shading model
 #### Step 7
-- in Camera's method `Render()` directional light is hardcoded
+- class Light represents a light source which can be either directional or point 
 #### Step 8
 - RT Image can be output by running the program
-- It shows a scene with a sphere underneath which is a plane
+- It shows a scene with two spheres underneath which is a plane.
