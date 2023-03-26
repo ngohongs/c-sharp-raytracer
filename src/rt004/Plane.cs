@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace rt004
 {
     internal class Plane : Solid
     {
-        private Vector3d normal;
+        [JsonInclude]
+        public Vector3d normal;
         public Plane(Vector3d position, Vector3d normal, Material material) : base(position, material)
         {
             this.normal = normal.Normalized();
@@ -28,7 +30,7 @@ namespace rt004
                 hit.normal = normal;
                 hit.solid = this;
 
-                return t > 0;
+                return t > 1.0e-6;
             }
 
             return false;

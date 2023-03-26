@@ -2,14 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace rt004
 {
     internal class Scene
     {
-        private List<Solid> solids = new List<Solid>();
+        [JsonInclude]
+        public List<Solid> solids = new List<Solid>();
         public void Add(Solid solid) {
             solids.Add(solid);
         }
@@ -28,7 +31,7 @@ namespace rt004
 
                 hitSomething = true;
 
-                double tempDistance = Vector3d.Distance(temp.position, RayTracer.camera.GetPosition());
+                double tempDistance = Vector3d.Distance(temp.position, Raytracer.camera.GetPosition());
 
                 if (closestDistance > tempDistance)
                 {

@@ -14,12 +14,12 @@ namespace rt004
             string fileName;
             fileName = args.Length < 1 ? "out.pfm" : args[0] + ".pfm";
 
-            if (!RayTracer.initialized)
+            if (!Raytracer.initialized)
             {
                 return 1;
             }
 
-            RayTracer.OutputImage(fileName);
+            Raytracer.OutputImage(fileName);
  
             return 0;
         }

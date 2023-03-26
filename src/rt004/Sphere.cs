@@ -3,24 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace rt004
 {
     internal class Sphere : Solid
     {
-        private double r;
+        [JsonInclude]
+        public double radius;
 
         public Sphere(Vector3d position, double radius, Material material) : base(position, material)
         {
-            this.r = radius;
+            this.radius = radius;
         }
 
         public override bool Intersect(Ray ray, ref RayHit hit)
         {
             double a = Vector3d.Dot(ray.d, ray.d);
             double b = 2.0d * Vector3d.Dot(ray.o - position, ray.d);
-            double c = Vector3d.Dot(ray.o - position, ray.o - position) - r * r;
+            double c = Vector3d.Dot(ray.o - position, ray.o - position) - radius * radius;
 
             double d = b * b - 4 * a * c;
             
@@ -34,7 +36,7 @@ namespace rt004
             hit.normal = (hit.position - position).Normalized();
             hit.solid = this;
 
-            return x1 > 0 && x2 > 0;
+            return x1 > 1.0e-6 && x2 > 1.0e-6;
         }
     }
 }

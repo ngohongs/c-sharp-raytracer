@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Vector3 = OpenTK.Mathematics.Vector3;
 using Vector3d = OpenTK.Mathematics.Vector3d;
@@ -15,13 +16,22 @@ namespace rt004
 {
     internal class Camera
     {
-        private Vector3d position;
-        private Vector3d forward;
-        private Vector3d up;
+        [JsonInclude]
+        public Vector3d position;
+        [JsonInclude]
+        public Vector3d forward;
+        [JsonInclude]
+        public Vector3d up;
 
-        private double fov;
-        private double height;
-        private double width;
+        private double _fov;        
+
+        [JsonInclude]
+        public double fov { get => _fov / Math.PI * 180; set => _fov = value / 180 * Math.PI; }
+
+        [JsonInclude]
+        public double height;
+        [JsonInclude]
+        public double width;
 
         private Matrix4d inverseViewMatrix;
         public Camera(Vector3d position, Vector3d forward, Vector3d up, double fov, double width, double height)
@@ -30,7 +40,7 @@ namespace rt004
             this.forward = forward.Normalized();
             this.up = up.Normalized();
 
-            this.fov = fov * Math.PI / 180.0d;
+            this._fov = fov * Math.PI / 180.0d;
             this.height = height;
             this.width = width;
 
@@ -84,17 +94,47 @@ namespace rt004
         public Vector4d Trace(Ray ray, int depth)
         {
             RayHit hit = new RayHit();
-            if (!RayTracer.scene.Intersect(ray, ref hit))
+
+            if (!Raytracer.scene.Intersect(ray, ref hit))
                 return Vector4d.Zero;
 
-            return new Vector4d(RayTracer.brdf.Shade(hit), 1.0d); 
+            Vector3d color = Raytracer.brdf.Shade(hit, Raytracer.ambientLight, true);
+            foreach (Light light in Raytracer.lights)
+            {
+                Ray shadowRay = new Ray(hit.position, light.GetDirection(hit.position));
+                RayHit shadowHit = new RayHit();
+
+                bool inShadow = Raytracer.scene.Intersect(shadowRay, ref shadowHit);
+
+                if (!inShadow)   
+                    color += Raytracer.brdf.Shade(hit, light);
+            }
+
+            if (depth >= Raytracer.MAX_DEPTH)
+                return new Vector4d(color, 1.0d);
+
+
+            if (hit.solid.material.IsGlossy())
+            {
+                Vector3d r = ray.d.Reflect(hit.normal).Normalized();
+                Ray reflectionRay = new Ray(hit.position, r);
+                color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
+            }
+
+            // TODO
+            //if (hit.solid.material.IsTransparent())
+            //{
+            //    Vector3 t = 
+            //}
+
+            return new Vector4d(color, 1.0d); 
         }
 
         private Ray CastRay(double x, double y)
         {
             double aspectRatio = width / height;
-            double px = (2 * ((x + 0.5) / width) - 1) * Math.Tan(fov / 2);
-            double py = (1 - 2 * ((y + 0.5) / height)) * Math.Tan(fov / 2);
+            double px = (2 * ((x + 0.5) / width) - 1) * Math.Tan(_fov / 2);
+            double py = (1 - 2 * ((y + 0.5) / height)) * Math.Tan(_fov / 2);
 
             if (width > height)
                 px *= aspectRatio;

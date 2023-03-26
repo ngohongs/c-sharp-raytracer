@@ -3,14 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace rt004
 {
+    [JsonDerivedType(typeof(Sphere), typeDiscriminator: "sphere")]
+    [JsonDerivedType(typeof(Plane), typeDiscriminator: "plane")]
     internal abstract class Solid
     {
+        [JsonInclude]
         public Material material;
-        protected Vector3d position;
+        [JsonInclude]
+        public Vector3d position;
         public Solid(Vector3d position, Material material)
         {
             this.position = position;
