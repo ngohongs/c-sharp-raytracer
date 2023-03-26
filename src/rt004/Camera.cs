@@ -104,22 +104,19 @@ namespace rt004
                 Ray shadowRay = new Ray(hit.position, light.GetDirection(hit.position));
                 RayHit shadowHit = new RayHit();
 
-                bool inShadow = Raytracer.scene.Intersect(shadowRay, ref shadowHit);
-
-                if (!inShadow)   
-                    color += Raytracer.brdf.Shade(hit, light);
+                color += Raytracer.brdf.Shade(hit, light);
             }
 
             if (depth >= Raytracer.MAX_DEPTH)
                 return new Vector4d(color, 1.0d);
 
 
-            if (hit.solid.material.IsGlossy())
-            {
-                Vector3d r = ray.d.Reflect(hit.normal).Normalized();
-                Ray reflectionRay = new Ray(hit.position, r);
-                color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
-            }
+            //if (hit.solid.material.IsGlossy())
+            //{
+            //    Vector3d r = ray.d.Reflect(hit.normal).Normalized();
+            //    Ray reflectionRay = new Ray(hit.position, r);
+            //    color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
+            //}
 
             // TODO
             //if (hit.solid.material.IsTransparent())
