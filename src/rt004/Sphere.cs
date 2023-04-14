@@ -32,11 +32,15 @@ namespace rt004
             double x1 = (-b - Math.Sqrt(d)) / (2 * a);
             double x2 = (-b + Math.Sqrt(d)) / (2 * a);
 
-            hit.position = x1 < x2 ? ray.At(x1) : ray.At(x2);
-            hit.normal = (hit.position - position).Normalized();
-            hit.solid = this;
+            if (x1 <= 1.0e-6 && x2 <= 1.0e-6)
+                return false;
 
-            return x1 > 1.0e-6 && x2 > 1.0e-6;
+            hit.position = x1 > 1.0e-6 ? ray.At(x1) : ray.At(x2);
+            hit.normal = x1 <= 1.0e-6 ? -(hit.position - position).Normalized() : (hit.position - position).Normalized();           
+            hit.solid = this;
+            hit.backface = x1 <= 1.0e-6;
+
+            return true;
         }
     }
 }

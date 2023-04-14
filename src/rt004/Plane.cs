@@ -27,13 +27,17 @@ namespace rt004
                 double t = Vector3d.Dot(numer, normal) / denom;
 
                 hit.position = ray.At(t);
-                hit.normal = normal;
+                hit.normal = denom < 0 ? normal : -normal;
                 hit.solid = this;
+                hit.backface = false;
 
                 return t > 1.0e-6;
             }
 
             return false;
         }
+
+        public override bool IsHollow() => false;
     }
+
 }

@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -64,24 +65,30 @@ namespace rt004
                 framebuffer.Insert(x, new List<float[]>((int)height));
                 for (int y = 0; y < framebuffer[x].Capacity; y++)
                 {
-                    float t = (float)(y / height);
-                    Vector3d white = new Vector3(1);
-                    Vector3d lightBlue = new Vector3(121.0f / 255.0f, 190.0f / 255.0f, 219.0f / 255.0f);
-                    Vector3 f = (Vector3)((1.0f - t) * lightBlue + t * white);
-                    framebuffer[x].Insert(y, new float[] { f.X, f.Y, f.Z });
+                    framebuffer[x].Insert(y, new float[] { 1.0f });
                 }
             }
+
+            Random random = new Random();
 
             for (int y = 0; y < (int) height; y++)
             {
                 for (int x = 0; x < (int) width; x++)
                 {
-                    Ray ray = CastRay(x, y);
+                    Vector4d color = Vector4d.Zero;
+                    for (int i = 0; i < Raytracer.SAMPLES; i++)
+                    {
+                        double dx = i == 0 ? 0 : random.NextDouble() - 1;
+                        double dy = i == 0 ? 0 : random.NextDouble() - 1;
 
-                    Vector4d color = Trace(ray, 1);
+                        Ray ray = CastRay(x + dx, y + dy);
 
-                    if (color.W != 1)
+                        color += Trace(ray, 1);
+                    }
+                    if (color.W < 1)
                         continue;
+
+                    color = new Vector4d((1.0 / color.W) * color.Xyz, 1.0d);
 
                     Vector3 floatColor = (Vector3)color.Xyz;
 
@@ -96,7 +103,7 @@ namespace rt004
             RayHit hit = new RayHit();
 
             if (!Raytracer.scene.Intersect(ray, ref hit))
-                return Vector4d.Zero;
+                return Vector4d.One;
 
             Vector3d color = Raytracer.brdf.Shade(hit, Raytracer.ambientLight, true);
             foreach (Light light in Raytracer.lights)
@@ -114,18 +121,37 @@ namespace rt004
                 return new Vector4d(color, 1.0d);
 
 
-            if (hit.solid.material.IsGlossy())
-            {
-                Vector3d r = ray.d.Reflect(hit.normal).Normalized();
-                Ray reflectionRay = new Ray(hit.position, r);
-                color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
-            }
-
-            // TODO
-            //if (hit.solid.material.IsTransparent())
+            //if (hit.solid.material.IsGlossy())
             //{
-            //    Vector3 t = 
+            //    Vector3d r = ray.d.Reflect(hit.normal).Normalized();
+            //    Ray reflectionRay = new Ray(hit.position, r);
+            //    color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
             //}
+            
+
+            if (hit.solid.material.IsTransparent())
+            {
+                double iorTo = hit.solid.material.Ior;
+                double iorFrom = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
+
+                if (hit.solid.IsHollow())
+                {
+                    if (hit.backface)
+                    { 
+                        iorFrom = ray.s.TryPop(out double iorInside) ? iorInside : hit.solid.material.Ior;
+                        iorTo = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
+                    }
+                    else
+                    {
+                        ray.s.Push(hit.solid.material.Ior);
+                    }
+                }
+
+                double eta = iorFrom / iorTo;
+                Vector3d t = ray.d.Refract(hit.normal, eta);
+                Ray refrationRay = new Ray(hit.position, t.Normalized(), ray.s.Clone());                    
+                color += 0.8 * Trace(refrationRay, depth + 1).Xyz;
+            }
 
             return new Vector4d(color, 1.0d); 
         }

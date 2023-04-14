@@ -92,11 +92,10 @@ namespace rt004
         {
             Vector3d I = vector.Normalized();
             Vector3d N = normal.Normalized();
-
-            double k = 1.0 - eta * eta * (1.0 - Vector3d.Dot(N, I) * Vector3d.Dot(N, I));
-            if (k < 0.0)
-                return Vector3d.Zero;       
-            return eta * I - (eta * Vector3d.Dot(N, I) + Math.Sqrt(k)) * N;
+            var cos_theta = Double.Min(Vector3d.Dot(-I, N), 1.0);
+            Vector3d r_out_perp = eta * (I + cos_theta * N);
+            Vector3d r_out_parallel = -Double.Sqrt(Double.Abs(1.0 - r_out_perp.LengthSquared)) * N;
+            return r_out_perp + r_out_parallel;
         }
     }
 }

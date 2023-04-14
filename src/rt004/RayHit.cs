@@ -12,5 +12,6 @@ namespace rt004
         public Solid solid;
         public Vector3d position;
         public Vector3d normal;
+        public bool backface;
     }
 }

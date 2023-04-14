@@ -23,7 +23,8 @@ namespace rt004
         public static Camera camera;
         public static Brdf brdf;
 
-        public static int MAX_DEPTH = 2;
+        public static int MAX_DEPTH = 3;
+        public static int SAMPLES = 1;
        
         static Raytracer()
         {
@@ -86,6 +87,7 @@ namespace rt004
 
         public static void Setup()
         {}
+
         public static void OutputImage(string fileName)
         {
             int wid = (int) camera.width;

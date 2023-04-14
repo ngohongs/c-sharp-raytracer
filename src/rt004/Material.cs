@@ -22,7 +22,9 @@ namespace rt004
         public double Kr;
         [JsonInclude]
         public double Kt;
-        public Material(Vector3d Ka, Vector3d Kd, Vector3d Ks, double Ns, double Kr = 0, double Kt = 0)
+        [JsonInclude]
+        public double Ior;
+        public Material(Vector3d Ka, Vector3d Kd, Vector3d Ks, double Ns, double Kr = 0, double Kt = 0, double Ior = 1)
         {
             this.Ka = Ka;
             this.Kd = Kd;
@@ -30,6 +32,7 @@ namespace rt004
             this.Ns = Ns;
             this.Kr = Kr;
             this.Kt = Kt;
+            this.Ior = Ior;
         }
 
         public bool IsGlossy() { return Kr > 0; }
