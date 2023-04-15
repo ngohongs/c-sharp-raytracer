@@ -26,5 +26,7 @@ namespace rt004
         public abstract bool Intersect(Ray ray, ref RayHit hit);
 
         public virtual bool IsHollow() => true;
+
+        public abstract Solid Transformed(Matrix4d modelMatrix);
     }
 }

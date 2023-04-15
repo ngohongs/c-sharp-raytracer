@@ -42,5 +42,12 @@ namespace rt004
 
             return true;
         }
+
+        public override Solid Transformed(Matrix4d modelMatrix)
+        {
+            Vector3d position = Vector3d.TransformPosition(this.position, modelMatrix);
+            double radius = Vector3d.Distance(Vector3d.TransformPosition(this.position + new Vector3d(this.radius, 0, 0), modelMatrix), position);
+            return new Sphere(position, radius, materialName);
+        }
     }
 }

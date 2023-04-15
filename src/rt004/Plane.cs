@@ -38,6 +38,12 @@ namespace rt004
         }
 
         public override bool IsHollow() => false;
-    }
+        public override Solid Transformed(Matrix4d modelMatrix)
+        {
+            Vector3d position = Vector3d.TransformPosition(this.position, modelMatrix);
+            Vector3d normal = Vector3d.TransformVector(this.normal, modelMatrix).Normalized();
+            return new Plane(position, normal, materialName);
+        }
 
+    }
 }

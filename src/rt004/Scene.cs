@@ -11,8 +11,10 @@ namespace rt004
 {
     internal class Scene
     {
-        [JsonInclude]
         public List<Solid> solids = new List<Solid>();
+        [JsonInclude]
+        public SceneNode root = new SceneNode();
+
         public void Add(Solid solid) {
             solids.Add(solid);
         }
@@ -58,6 +60,28 @@ namespace rt004
             }
             hit = closest;
             return hitSomething;
+        }
+
+        private List<Solid> TransformedSolids(SceneNode root, Matrix4d parentTransform)
+        {
+            List<Solid> result = new List<Solid>();
+
+            Matrix4d rootModelMatrix = root.GetModelMatrix() * parentTransform;
+
+            if (root.Solid != null)
+                result.Add(root.Solid.Transformed(rootModelMatrix));
+
+            foreach (var child in root.Children)
+            {
+                result.AddRange(TransformedSolids(child, rootModelMatrix));
+            }
+
+            return result;
+        }
+
+        public void TransformToDirect()
+        {
+            solids = TransformedSolids(root, Matrix4d.Identity);
         }
     }
 }

@@ -22,12 +22,13 @@ namespace rt004
         public static Scene scene = new Scene();
         public static List<Light> lights = new List<Light>(); 
         public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
+        public static Dictionary<string, Solid> solids = new Dictionary<string, Solid>();
         public static Light ambientLight;
         public static Camera camera;
         public static Brdf brdf;
 
-        public static int MAX_DEPTH = 3;
-        public static int SAMPLES_K = 4;
+        public static int MAX_DEPTH;
+        public static int SAMPLES_K;
        
         static Raytracer()
         {
@@ -96,15 +97,35 @@ namespace rt004
 
         public static void Setup()
         {
-            if (!(initialized = scene.SetSolidMaterials())) {
-                Console.WriteLine("Config file is invalid (materialName of a solid is null or doesn't exist)");
-                return;
-            }
             if (!(initialized = MAX_DEPTH > 0 && SAMPLES_K > 0))
             {
                 Console.WriteLine("Config file is invalid (maxDepth or samplesK is less than 1)");
                 return;
             }
+
+            scene.TransformToDirect();
+
+            if (!(initialized = scene.SetSolidMaterials())) {
+                Console.WriteLine("Config file is invalid (materialName of a solid is null or doesn't exist)");
+                return;
+            }
+        }
+
+        public static List<Solid> TransformedSolids(SceneNode root, Matrix4d parentTransform)
+        {
+            List<Solid> result = new List<Solid>();
+
+            Matrix4d rootModelMatrix = root.GetModelMatrix() * parentTransform;
+
+            if (root.Solid != null)
+                result.Add(root.Solid.Transformed(rootModelMatrix));
+       
+            foreach (var child in root.Children)
+            {
+                result.AddRange(TransformedSolids(child, rootModelMatrix));
+            }
+
+            return result;
         }
 
         public static void OutputImage(string fileName)

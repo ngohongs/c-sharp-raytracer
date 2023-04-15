@@ -1,6 +1,6 @@
 {
-  "maxDepth" : 3,
-  "samplesK" : 2,
+  "maxDepth": 3,
+  "samplesK": 2,
   "materials": {
     "default": {
       "Ka": [
@@ -62,46 +62,103 @@
       ],
       "Ns": 100,
       "Kr": 0,
-      "Kt": 0
+      "Kt": 0,
+      "Ior": 0
     }
   },
   "scene": {
-    "solids": [
-      {
-        "$type": "sphere",
-        "radius": 2,
-        "materialName": "default",
-        "position": [
-          -2,
-          1,
-          -5
-        ]
-      },
-      {
-        "$type": "sphere",
-        "radius": 1,
-        "materialName": "glass",
-        "position": [
-          0,
-          0,
-          -3
-        ]
-      },
-      {
-        "$type": "plane",
-        "normal": [
-          0,
-          0.8944271909999159,
-          0.4472135954999579
-        ],
-        "materialName": "red",
-        "position": [
-          0,
-          0,
-          -10
-        ]
-      }
-    ]
+    "root": {
+      "Position": [
+        0,
+        0,
+        0
+      ],
+      "Scale": 1,
+      "Rotation": [
+        0,
+        0,
+        0
+      ],
+      "Solid": null,
+      "Children": [
+        {
+          "Position": [
+            -2,
+            1,
+            -5
+          ],
+          "Scale": 2,
+          "Rotation": [
+            0,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "sphere",
+            "radius": 1,
+            "materialName": "default",
+            "position": [
+              0,
+              0,
+              0
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            0,
+            0,
+            0
+          ],
+          "Scale": 1,
+          "Rotation": [
+            0,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "sphere",
+            "radius": 1,
+            "materialName": "glass",
+            "position": [
+              0,
+              0,
+              -3
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            0,
+            0,
+            0
+          ],
+          "Scale": 1,
+          "Rotation": [
+            0,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "plane",
+            "normal": [
+              0,
+              0.8944271909999161,
+              0.44721359549995804
+            ],
+            "materialName": "red",
+            "position": [
+              0,
+              0,
+              -10
+            ]
+          },
+          "Children": []
+        }
+      ]
+    }
   },
   "lights": [
     {
