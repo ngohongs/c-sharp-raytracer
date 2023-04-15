@@ -76,19 +76,30 @@ namespace rt004
                 for (int x = 0; x < (int) width; x++)
                 {
                     Vector4d color = Vector4d.Zero;
-                    for (int i = 0; i < Raytracer.SAMPLES; i++)
+
+                    if (Raytracer.SAMPLES_K == 1)
                     {
-                        double dx = i == 0 ? 0 : random.NextDouble() - 1;
-                        double dy = i == 0 ? 0 : random.NextDouble() - 1;
-
-                        Ray ray = CastRay(x + dx, y + dy);
-
+                        Ray ray = CastRay(x, y);
                         color += Trace(ray, 1);
                     }
-                    if (color.W < 1)
-                        continue;
+                    else
+                    {
+                        double step = 1.0d / Raytracer.SAMPLES_K;
 
-                    color = new Vector4d((1.0 / color.W) * color.Xyz, 1.0d);
+                        for (int i = 0; i < Raytracer.SAMPLES_K; i++)
+                        {
+                            for (int j = 0; j < Raytracer.SAMPLES_K; j++)
+                            {
+                                double dx = random.NextDouble() * step + step * i - 0.5d;
+                                double dy = random.NextDouble() * step + step * j - 0.5d;
+                                Ray ray = CastRay(x + dx, y + dy);
+                                color += Trace(ray, 1);
+                            }
+                        }
+                        color = color / Raytracer.SAMPLES_K;
+                    }
+     
+                    color = color / Raytracer.SAMPLES_K;
 
                     Vector3 floatColor = (Vector3)color.Xyz;
 
@@ -120,37 +131,18 @@ namespace rt004
             if (depth >= Raytracer.MAX_DEPTH)
                 return new Vector4d(color, 1.0d);
 
-
-            //if (hit.solid.material.IsGlossy())
-            //{
-            //    Vector3d r = ray.d.Reflect(hit.normal).Normalized();
-            //    Ray reflectionRay = new Ray(hit.position, r);
-            //    color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
-            //}
-            
+            if (hit.solid.material.IsGlossy())
+            {
+                Vector3d r = ray.d.Reflect(hit.normal).Normalized();
+                Ray reflectionRay = new Ray(hit.position, r);
+                color += hit.solid.material.Kr * Trace(reflectionRay, depth + 1).Xyz;
+            }
 
             if (hit.solid.material.IsTransparent())
             {
-                double iorTo = hit.solid.material.Ior;
-                double iorFrom = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
-
-                if (hit.solid.IsHollow())
-                {
-                    if (hit.backface)
-                    { 
-                        iorFrom = ray.s.TryPop(out double iorInside) ? iorInside : hit.solid.material.Ior;
-                        iorTo = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
-                    }
-                    else
-                    {
-                        ray.s.Push(hit.solid.material.Ior);
-                    }
-                }
-
-                double eta = iorFrom / iorTo;
-                Vector3d t = ray.d.Refract(hit.normal, eta);
+                Vector3d t = ray.d.Refract(hit.normal, GetETA(ray, hit));
                 Ray refrationRay = new Ray(hit.position, t.Normalized(), ray.s.Clone());                    
-                color += 0.8 * Trace(refrationRay, depth + 1).Xyz;
+                color += hit.solid.material.Kt * Trace(refrationRay, depth + 1).Xyz;
             }
 
             return new Vector4d(color, 1.0d); 
@@ -174,8 +166,29 @@ namespace rt004
             Vector3d rayWorldDirection = (inverseViewMatrix * rayDirection).Xyz.Normalized();
 
             return new Ray(rayWorldOrigin, rayWorldDirection);
-
         }
+
+        private double GetETA(Ray ray, RayHit hit)
+        {
+            double iorTo = hit.solid.material.Ior;
+            double iorFrom = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
+
+            if (hit.solid.IsHollow())
+            {
+                if (hit.backface)
+                {
+                    iorFrom = ray.s.TryPop(out double iorInside) ? iorInside : hit.solid.material.Ior;
+                    iorTo = ray.s.Count > 0 ? ray.s.First() : 1; // 1 is air
+                }
+                else
+                {
+                    ray.s.Push(hit.solid.material.Ior);
+                }
+            }
+
+            return iorFrom / iorTo;
+        }
+
 
         public Vector3d GetPosition() { return position; }
     }

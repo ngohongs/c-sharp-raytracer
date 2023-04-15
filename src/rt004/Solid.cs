@@ -12,14 +12,15 @@ namespace rt004
     [JsonDerivedType(typeof(Plane), typeDiscriminator: "plane")]
     internal abstract class Solid
     {
-        [JsonInclude]
         public Material material;
         [JsonInclude]
+        public string materialName;
+        [JsonInclude]
         public Vector3d position;
-        public Solid(Vector3d position, Material material)
+        public Solid(Vector3d position, string materialName)
         {
             this.position = position;
-            this.material = material;
+            this.materialName = materialName;
         }
             
         public abstract bool Intersect(Ray ray, ref RayHit hit);

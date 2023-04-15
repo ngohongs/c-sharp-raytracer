@@ -1,7 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,12 +21,13 @@ namespace rt004
         // Scene
         public static Scene scene = new Scene();
         public static List<Light> lights = new List<Light>(); 
+        public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
         public static Light ambientLight;
         public static Camera camera;
         public static Brdf brdf;
 
         public static int MAX_DEPTH = 3;
-        public static int SAMPLES = 1;
+        public static int SAMPLES_K = 4;
        
         static Raytracer()
         {
@@ -51,6 +54,9 @@ namespace rt004
                     return false;
                 }
 
+                MAX_DEPTH = config.maxDepth;
+                SAMPLES_K = config.samplesK;
+                materials = config.materials;
                 scene = config.scene;
                 lights = config.lights;
                 ambientLight = config.ambientLight;
@@ -70,6 +76,9 @@ namespace rt004
         public static void ConfigSave(string configFileName = "config.json")
         {
             Config config = new Config();
+            config.maxDepth = MAX_DEPTH;
+            config.samplesK = SAMPLES_K;
+            config.materials = materials;
             config.scene = scene;
             config.brdf = brdf;
             config.camera = camera;
@@ -86,7 +95,17 @@ namespace rt004
         }
 
         public static void Setup()
-        {}
+        {
+            if (!(initialized = scene.SetSolidMaterials())) {
+                Console.WriteLine("Config file is invalid (materialName of a solid is null or doesn't exist)");
+                return;
+            }
+            if (!(initialized = MAX_DEPTH > 0 && SAMPLES_K > 0))
+            {
+                Console.WriteLine("Config file is invalid (maxDepth or samplesK is less than 1)");
+                return;
+            }
+        }
 
         public static void OutputImage(string fileName)
         {

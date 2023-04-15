@@ -10,6 +10,12 @@ namespace rt004
     internal class Config
     {
         [JsonInclude]
+        public int maxDepth;
+        [JsonInclude]
+        public int samplesK;
+        [JsonInclude]
+        public Dictionary<string, Material> materials;
+        [JsonInclude]
         public Scene scene;
         [JsonInclude]
         public List<Light> lights;

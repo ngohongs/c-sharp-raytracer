@@ -17,6 +17,22 @@ namespace rt004
             solids.Add(solid);
         }
 
+        public bool SetSolidMaterials()
+        {
+            try
+            {
+                foreach (Solid solid in solids)
+                {
+                    solid.material = Raytracer.materials[solid.materialName];
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool Intersect(Ray ray, ref RayHit hit)
         {
             RayHit temp = new RayHit();

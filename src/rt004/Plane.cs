@@ -13,7 +13,7 @@ namespace rt004
     {
         [JsonInclude]
         public Vector3d normal;
-        public Plane(Vector3d position, Vector3d normal, Material material) : base(position, material)
+        public Plane(Vector3d position, Vector3d normal, string materialName) : base(position, materialName)
         {
             this.normal = normal.Normalized();
         }

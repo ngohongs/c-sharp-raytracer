@@ -13,7 +13,7 @@ namespace rt004
         [JsonInclude]
         public double radius;
 
-        public Sphere(Vector3d position, double radius, Material material) : base(position, material)
+        public Sphere(Vector3d position, double radius, string materialName) : base(position, materialName)
         {
             this.radius = radius;
         }
