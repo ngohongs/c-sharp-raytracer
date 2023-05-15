@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Solids;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,16 @@ namespace rt004
         public Vector3d position;
         public Vector3d normal;
         public bool backface;
+
+        public RayHit Clone()
+        {
+            return new RayHit
+            {
+                solid = solid,
+                position = position,
+                normal = normal,
+                backface = backface
+            };
+        }
     }
 }

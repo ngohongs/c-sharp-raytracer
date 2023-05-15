@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Solids;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -136,13 +137,13 @@ namespace rt004
             // HDR image.
             FloatImage fi = new FloatImage(wid, hei, 3);
 
-            List<List<float[]>> framebuffer = Raytracer.camera.Render();
+            Framebuffer framebuffer = Raytracer.camera.Render();
 
             for (int y = 0; y < hei; y++)
             {
                 for (int x = 0; x < wid; x++)
                 {
-                    fi.PutPixel(x, y, framebuffer[x][y]);
+                    fi.PutPixel(x, y, framebuffer.GetPixel(x, y));
                 }
             }
 

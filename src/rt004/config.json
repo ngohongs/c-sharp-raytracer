@@ -44,6 +44,27 @@
       "Kt": 0.5,
       "Ior": 1.5
     },
+    "blue": {
+      "Ka": [
+        0.0,
+        0.0,
+        0.2
+      ],
+      "Kd": [
+        0.0,
+        0.0,
+        0.7
+      ],
+      "Ks": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "Ns": 96.078431,
+      "Kr": 0,
+      "Kt": 0,
+      "Ior": 0
+    },
     "red": {
       "Ka": [
         0.1,
@@ -62,6 +83,27 @@
       ],
       "Ns": 100,
       "Kr": 0,
+      "Kt": 0,
+      "Ior": 0
+    },
+    "green": {
+      "Ka": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "Kd": [
+        0,
+        0.5,
+        0
+      ],
+      "Ks": [
+        0,
+        1,
+        0
+      ],
+      "Ns": 100,
+      "Kr": 0.3,
       "Kt": 0,
       "Ior": 0
     }
@@ -83,7 +125,7 @@
       "Children": [
         {
           "Position": [
-            -2,
+            2,
             1,
             -5
           ],
@@ -94,9 +136,52 @@
             0
           ],
           "Solid": {
-            "$type": "sphere",
-            "radius": 1,
+            "$type": "triangle",
+            "v0": [
+              1,
+              1,
+              -5
+            ],
+            "v1": [
+              5,
+              2,
+              -3
+            ],
+            "v2": [
+              2,
+              3,
+              -5
+            ],
             "materialName": "default",
+            "position": [
+              0,
+              0,
+              0
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            1,
+            2,
+            -4
+          ],
+          "Scale": 1,
+          "Rotation": [
+            0,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "disc",
+            "radius": 1,
+            "normal": [
+              1,
+              1,
+              3
+            ],
+            "materialName": "green",
             "position": [
               0,
               0,
@@ -122,9 +207,33 @@
             "radius": 1,
             "materialName": "glass",
             "position": [
-              0,
+              -0.5,
               0,
               -3
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            1,
+            -0.5,
+            -3
+          ],
+          "Scale": 1,
+          "Rotation": [
+            15,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "cube",
+            "a" : 1,
+            "materialName": "blue",
+            "position": [
+              0,
+              0,
+              0
             ]
           },
           "Children": []

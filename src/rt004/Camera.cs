@@ -55,60 +55,59 @@ namespace rt004
             inverseViewMatrix.Invert();
         }
 
-        public List<List<float[]>> Render()
+        public Framebuffer Render()
         {
-            List<List<float[]>> framebuffer = new List<List<float[]>>((int) width);
+            Framebuffer framebuffer = new ((int)width, (int)height, new float[] { 1.0f });
+            
+            Stopwatch sw = Stopwatch.StartNew();
 
-            // Background
-            for (int x = 0; x < framebuffer.Capacity; x++)
+            Parallel.For(0, (int)height * (int)width, i =>
             {
-                framebuffer.Insert(x, new List<float[]>((int)height));
-                for (int y = 0; y < framebuffer[x].Capacity; y++)
-                {
-                    framebuffer[x].Insert(y, new float[] { 1.0f });
-                }
-            }
+                int x = i % (int)width;
+                int y = i / (int)width;
+                framebuffer.SetPixel(x, y, RenderPixel(x, y));
+            });
 
-            Random random = new Random();
+            sw.Stop();
 
-            for (int y = 0; y < (int) height; y++)
-            {
-                for (int x = 0; x < (int) width; x++)
-                {
-                    Vector4d color = Vector4d.Zero;
+            Console.WriteLine($"Render time: {sw.ElapsedMilliseconds} ms");
 
-                    if (Raytracer.SAMPLES_K == 1)
-                    {
-                        Ray ray = CastRay(x, y);
-                        color += Trace(ray, 1);
-                    }
-                    else
-                    {
-                        double step = 1.0d / Raytracer.SAMPLES_K;
-
-                        for (int i = 0; i < Raytracer.SAMPLES_K; i++)
-                        {
-                            for (int j = 0; j < Raytracer.SAMPLES_K; j++)
-                            {
-                                double dx = random.NextDouble() * step + step * i - 0.5d;
-                                double dy = random.NextDouble() * step + step * j - 0.5d;
-                                Ray ray = CastRay(x + dx, y + dy);
-                                color += Trace(ray, 1);
-                            }
-                        }
-                        color = color / Raytracer.SAMPLES_K;
-                    }
-     
-                    color = color / Raytracer.SAMPLES_K;
-
-                    Vector3 floatColor = (Vector3)color.Xyz;
-
-                    framebuffer[x][y] = new float[] { floatColor.X, floatColor.Y, floatColor.Z };
-                }
-            }
             return framebuffer;
         }
 
+        private float[] RenderPixel(int x, int y)
+        {
+            Random random = new Random();
+
+            Vector4d color = Vector4d.Zero;
+
+            if (Raytracer.SAMPLES_K == 1)
+            {
+                Ray ray = CastRay(x, y);
+                color += Trace(ray, 1);
+            }
+            else
+            {
+                double step = 1.0d / Raytracer.SAMPLES_K;
+
+                for (int i = 0; i < Raytracer.SAMPLES_K; i++)
+                {
+                    for (int j = 0; j < Raytracer.SAMPLES_K; j++)
+                    {
+                        double dx = random.NextDouble() * step + step * i - 0.5d;
+                        double dy = random.NextDouble() * step + step * j - 0.5d;
+                        Ray ray = CastRay(x + dx, y + dy);
+                        color += Trace(ray, 1);
+                    }
+                }
+                color = color / (Raytracer.SAMPLES_K * Raytracer.SAMPLES_K);
+            }
+
+            Vector3 floatColor = (Vector3)color.Xyz;
+
+            return new float[] { floatColor.X, floatColor.Y, floatColor.Z };
+        }
+ 
         public Vector4d Trace(Ray ray, int depth)
         {
             RayHit hit = new RayHit();

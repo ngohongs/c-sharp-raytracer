@@ -7,12 +7,13 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace rt004
+namespace rt004.Solids
 {
     internal class Plane : Solid
     {
         [JsonInclude]
         public Vector3d normal;
+
         public Plane(Vector3d position, Vector3d normal, string materialName) : base(position, materialName)
         {
             this.normal = normal.Normalized();
@@ -41,7 +42,7 @@ namespace rt004
         public override Solid Transformed(Matrix4d modelMatrix)
         {
             Vector3d position = Vector3d.TransformPosition(this.position, modelMatrix);
-            Vector3d normal = Vector3d.TransformVector(this.normal, modelMatrix).Normalized();
+            Vector3d normal = Vector3d.TransformNormal(this.normal, modelMatrix).Normalized();
             return new Plane(position, normal, materialName);
         }
 

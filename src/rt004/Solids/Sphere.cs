@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace rt004
+namespace rt004.Solids
 {
     internal class Sphere : Solid
     {
@@ -25,7 +25,7 @@ namespace rt004
             double c = Vector3d.Dot(ray.o - position, ray.o - position) - radius * radius;
 
             double d = b * b - 4 * a * c;
-            
+
             if (d < 0)
                 return false;
 
@@ -36,7 +36,7 @@ namespace rt004
                 return false;
 
             hit.position = x1 > 1.0e-6 ? ray.At(x1) : ray.At(x2);
-            hit.normal = x1 <= 1.0e-6 ? -(hit.position - position).Normalized() : (hit.position - position).Normalized();           
+            hit.normal = x1 <= 1.0e-6 ? -(hit.position - position).Normalized() : (hit.position - position).Normalized();
             hit.solid = this;
             hit.backface = x1 <= 1.0e-6;
 
@@ -47,6 +47,7 @@ namespace rt004
         {
             Vector3d position = Vector3d.TransformPosition(this.position, modelMatrix);
             double radius = Vector3d.Distance(Vector3d.TransformPosition(this.position + new Vector3d(this.radius, 0, 0), modelMatrix), position);
+
             return new Sphere(position, radius, materialName);
         }
     }
