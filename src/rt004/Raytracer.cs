@@ -1,17 +1,12 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Brdfs;
+using rt004.Cameras;
+using rt004.Helpers;
+using rt004.Hierarchy;
+using rt004.Lights;
+using rt004.Materials;
 using rt004.Solids;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace rt004
 {
@@ -24,9 +19,10 @@ namespace rt004
         public static List<Light> lights = new List<Light>(); 
         public static Dictionary<string, Material> materials = new Dictionary<string, Material>();
         public static Dictionary<string, Solid> solids = new Dictionary<string, Solid>();
-        public static Light ambientLight;
+        public static AmbientLight ambientLight;
         public static Camera camera;
         public static Brdf brdf;
+        public static Vector3d background;
 
         public static int MAX_DEPTH;
         public static int SAMPLES_K;
@@ -64,6 +60,7 @@ namespace rt004
                 ambientLight = config.ambientLight;
                 camera = config.camera;
                 brdf = config.brdf;
+                background = config.background;
 
             }
             catch (Exception e)
@@ -86,6 +83,7 @@ namespace rt004
             config.camera = camera;
             config.lights = lights;
             config.ambientLight = ambientLight;
+            config.background = background;
 
             var options = new JsonSerializerOptions();
             options.Converters.Add(new Vector3dConverter());

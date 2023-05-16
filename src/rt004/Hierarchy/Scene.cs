@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Rays;
 using rt004.Solids;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace rt004
+namespace rt004.Hierarchy
 {
     internal class Scene
     {
@@ -16,7 +17,8 @@ namespace rt004
         [JsonInclude]
         public SceneNode root = new SceneNode();
 
-        public void Add(Solid solid) {
+        public void Add(Solid solid)
+        {
             solids.Add(solid);
         }
 

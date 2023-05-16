@@ -1,11 +1,14 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Helpers;
+using rt004.Lights;
+using rt004.Rays;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace rt004
+namespace rt004.Brdfs
 {
     internal class Phong : Brdf
     {

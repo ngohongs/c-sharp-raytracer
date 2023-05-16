@@ -11,7 +11,7 @@ namespace rt004
         private List<List<float[]>> framebuffer;
         private int width;
         private int height;
-        public Framebuffer(int width, int height, float[] color)
+        public Framebuffer(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -21,7 +21,7 @@ namespace rt004
                 framebuffer.Add(new List<float[]>(height));
                 for (int j = 0; j < height; j++)
                 {
-                    framebuffer[i].Add(color);
+                    framebuffer[i].Add(new float[] { 0.0f });
                 }
             }
         }

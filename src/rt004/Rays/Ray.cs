@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace rt004
+namespace rt004.Rays
 {
     internal class Ray
     {
@@ -13,8 +13,8 @@ namespace rt004
         public Stack<double> s;
         public Ray(Vector3d origin, Vector3d direction, Stack<double>? space = null)
         {
-            this.o = origin;
-            this.d = direction;
+            o = origin;
+            d = direction;
             s = space != null ? space : new Stack<double>();
         }
 

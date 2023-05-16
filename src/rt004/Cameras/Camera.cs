@@ -1,4 +1,8 @@
 ﻿using OpenTK.Mathematics;
+using rt004.Helpers;
+using rt004.Lights;
+using rt004.Rays;
+using rt004.Solids;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,9 +17,10 @@ using Vector3 = OpenTK.Mathematics.Vector3;
 using Vector3d = OpenTK.Mathematics.Vector3d;
 using Vector4d = OpenTK.Mathematics.Vector4d;
 
-namespace rt004
+namespace rt004.Cameras
 {
-    internal class Camera
+    [JsonDerivedType(typeof(PerspectiveCamera), typeDiscriminator: "perspective")]
+    internal abstract class Camera
     {
         [JsonInclude]
         public Vector3d position;
@@ -24,28 +29,23 @@ namespace rt004
         [JsonInclude]
         public Vector3d up;
 
-        private double _fov;        
-
-        [JsonInclude]
-        public double fov { get => _fov / Math.PI * 180; set => _fov = value / 180 * Math.PI; }
-
         [JsonInclude]
         public double height;
         [JsonInclude]
         public double width;
 
-        private Matrix4d inverseViewMatrix;
-        public Camera(Vector3d position, Vector3d forward, Vector3d up, double fov, double width, double height)
+        protected Matrix4d inverseViewMatrix;
+
+        public Camera(Vector3d position, Vector3d forward, Vector3d up, double width, double height)
         {
             this.position = position;
+
             this.forward = forward.Normalized();
             this.up = up.Normalized();
+            Vector3d right = Vector3d.Cross(forward, up).Normalized();
 
-            this._fov = fov * Math.PI / 180.0d;
             this.height = height;
             this.width = width;
-
-            Vector3d right = Vector3d.Cross(forward, up).Normalized();
 
             inverseViewMatrix = new Matrix4d();
             inverseViewMatrix.Column0 = new Vector4d(right, 0.0d);
@@ -57,8 +57,8 @@ namespace rt004
 
         public Framebuffer Render()
         {
-            Framebuffer framebuffer = new ((int)width, (int)height, new float[] { 1.0f });
-            
+            Framebuffer framebuffer = new((int)width, (int)height);
+
             Stopwatch sw = Stopwatch.StartNew();
 
             Parallel.For(0, (int)height * (int)width, i =>
@@ -107,13 +107,13 @@ namespace rt004
 
             return new float[] { floatColor.X, floatColor.Y, floatColor.Z };
         }
- 
+
         public Vector4d Trace(Ray ray, int depth)
         {
             RayHit hit = new RayHit();
 
             if (!Raytracer.scene.Intersect(ray, ref hit))
-                return Vector4d.One;
+                return new Vector4d(Raytracer.background, 1.0);
 
             Vector3d color = Raytracer.brdf.Shade(hit, Raytracer.ambientLight, true);
             foreach (Light light in Raytracer.lights)
@@ -123,7 +123,7 @@ namespace rt004
 
                 bool inShadow = Raytracer.scene.Intersect(shadowRay, ref shadowHit);
 
-                if (!inShadow)   
+                if (!inShadow)
                     color += Raytracer.brdf.Shade(hit, light);
             }
 
@@ -140,32 +140,14 @@ namespace rt004
             if (hit.solid.material.IsTransparent())
             {
                 Vector3d t = ray.d.Refract(hit.normal, GetETA(ray, hit));
-                Ray refrationRay = new Ray(hit.position, t.Normalized(), ray.s.Clone());                    
+                Ray refrationRay = new Ray(hit.position, t.Normalized(), ray.s.Clone());
                 color += hit.solid.material.Kt * Trace(refrationRay, depth + 1).Xyz;
             }
 
-            return new Vector4d(color, 1.0d); 
+            return new Vector4d(color, 1.0d);
         }
 
-        private Ray CastRay(double x, double y)
-        {
-            double aspectRatio = width / height;
-            double px = (2 * ((x + 0.5) / width) - 1) * Math.Tan(_fov / 2);
-            double py = (1 - 2 * ((y + 0.5) / height)) * Math.Tan(_fov / 2);
-
-            if (width > height)
-                px *= aspectRatio;
-            else
-                py *= 1.0d / aspectRatio;
-            
-            Vector4d rayOrigin = new Vector4d(0.0d, 0.0d, 0.0d, 1.0d);
-            Vector4d rayDirection = new Vector4d(px, py, -1.0d, 0.0d);
-
-            Vector3d rayWorldOrigin = (inverseViewMatrix * rayOrigin).Xyz;
-            Vector3d rayWorldDirection = (inverseViewMatrix * rayDirection).Xyz.Normalized();
-
-            return new Ray(rayWorldOrigin, rayWorldDirection);
-        }
+        protected abstract Ray CastRay(double x, double y);
 
         private double GetETA(Ray ray, RayHit hit)
         {
@@ -187,7 +169,6 @@ namespace rt004
 
             return iorFrom / iorTo;
         }
-
 
         public Vector3d GetPosition() { return position; }
     }

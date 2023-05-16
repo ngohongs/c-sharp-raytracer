@@ -1,11 +1,6 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
+using rt004.Rays;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace rt004.Solids
 {
@@ -39,6 +34,7 @@ namespace rt004.Solids
         }
 
         public override bool IsHollow() => false;
+
         public override Solid Transformed(Matrix4d modelMatrix)
         {
             Vector3d position = Vector3d.TransformPosition(this.position, modelMatrix);
