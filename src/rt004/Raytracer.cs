@@ -26,6 +26,7 @@ namespace rt004
 
         public static int MAX_DEPTH;
         public static int SAMPLES_K;
+        public static int CHUNK_SIZE = 16;
        
         static Raytracer()
         {
@@ -54,6 +55,7 @@ namespace rt004
 
                 MAX_DEPTH = config.maxDepth;
                 SAMPLES_K = config.samplesK;
+                CHUNK_SIZE = config.chunkSize;
                 materials = config.materials;
                 scene = config.scene;
                 lights = config.lights;
@@ -77,6 +79,7 @@ namespace rt004
             Config config = new Config();
             config.maxDepth = MAX_DEPTH;
             config.samplesK = SAMPLES_K;
+            config.chunkSize = CHUNK_SIZE;
             config.materials = materials;
             config.scene = scene;
             config.brdf = brdf;

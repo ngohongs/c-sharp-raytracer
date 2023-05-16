@@ -59,20 +59,57 @@ namespace rt004.Cameras
         {
             Framebuffer framebuffer = new((int)width, (int)height);
 
+            // Annouce render with resolution and samples and depth
+            Console.WriteLine($"Rendering {width}x{height} image with {Raytracer.SAMPLES_K} samples and {Raytracer.MAX_DEPTH} depth");
+
             Stopwatch sw = Stopwatch.StartNew();
 
-            Parallel.For(0, (int)height * (int)width, i =>
+            //Sequential
+            //for (int j = 0; j < (int)height; j += Raytracer.CHUNK_SIZE)
+            //{
+            //    for (int i = 0; i < (int)width; i += Raytracer.CHUNK_SIZE)
+            //    {
+            //        for (int y = j; y < j + Raytracer.CHUNK_SIZE && y < height; y++)
+            //        {
+            //            for (int x = i; x < i + Raytracer.CHUNK_SIZE && x < width; x++)
+            //            {
+            //                framebuffer.SetPixel(x, y, RenderPixel(x, y));
+            //            }
+            //        }
+            //    }
+            //}
+
+            // Parallel
+            var tasks = new List<Task>();
+            for (int j = 0; j < (int)height; j += Raytracer.CHUNK_SIZE)
             {
-                int x = i % (int)width;
-                int y = i / (int)width;
-                framebuffer.SetPixel(x, y, RenderPixel(x, y));
-            });
+                for (int i = 0; i < (int)width; i += Raytracer.CHUNK_SIZE)
+                {
+                    tasks.Add(RunRenderChunkTask(i, j, framebuffer));
+                }
+            }
+
+            // Wait for all tasks to finish
+            Task.WaitAll(tasks.ToArray());
 
             sw.Stop();
-
             Console.WriteLine($"Render time: {sw.ElapsedMilliseconds} ms");
 
             return framebuffer;
+        }
+
+        private Task RunRenderChunkTask(int i, int j, Framebuffer framebuffer)
+        {
+            return Task.Run(() =>
+            {
+                for (int y = j; y < j + Raytracer.CHUNK_SIZE && y < height; y++)
+                {
+                    for (int x = i; x < i + Raytracer.CHUNK_SIZE && x < width; x++)
+                    {
+                        framebuffer.SetPixel(x, y, RenderPixel(x, y));
+                    }
+                }
+            });
         }
 
         private float[] RenderPixel(int x, int y)

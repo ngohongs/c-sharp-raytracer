@@ -20,6 +20,8 @@ namespace rt004
         [JsonInclude]
         public int samplesK;
         [JsonInclude]
+        public int chunkSize;
+        [JsonInclude]
         public Dictionary<string, Material> materials;
         [JsonInclude]
         public Scene scene;
