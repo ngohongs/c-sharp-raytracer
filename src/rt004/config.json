@@ -66,6 +66,27 @@
       "Kt": 0,
       "Ior": 1
     },
+    "green": {
+      "Ka": [
+        0.02,
+        0.08,
+        0.02
+      ],
+      "Kd": [
+        0.12,
+        0.48,
+        0.12
+      ],
+      "Ks": [
+        0.08,
+        0.32,
+        0.08
+      ],
+      "Ns": 80,
+      "Kr": 0.2,
+      "Kt": 0,
+      "Ior": 1
+    },
     "gold": {
       "Ka": [
         0.06,
@@ -108,7 +129,27 @@
       "Kt": 0,
       "Ior": 0
     },
-    "glass": {
+    "glass_highior": {
+      "Ka": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "Kd": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "Ks": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "Ns": 90,
+      "Kr": 0.5,
+      "Kt": 0.5,
+      "Ior": 1.5
+    },"glass_lowior": {
       "Ka": [
         0.1,
         0.1,
@@ -127,7 +168,7 @@
       "Ns": 90,
       "Kr": 0.0,
       "Kt": 0.7,
-      "Ior": 1.5
+      "Ior": 1.05
     }
   },
   "background": [ 0.1, 0.2, 0.3 ],
@@ -173,8 +214,8 @@
         {
           "Position": [
             0.5,
-            -0.5,
-            2
+            0,
+            -5
           ],
           "Scale": 1,
           "Rotation": [
@@ -183,9 +224,60 @@
             0
           ],
           "Solid": {
+            "$type": "disc",
+            "radius": 5.0,
+            "normal": [0, 0, 1],
+            "materialName": "green",
+            "position": [
+              0,
+              0,
+              0
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            0.0,
+            -0.5,
+            2
+          ],
+          "Scale": 1,
+          "Rotation": [
+            45,
+            45,
+            0
+          ],
+          "Solid": {
             "$type": "sphere",
             "radius": 0.5,
-            "materialName": "glass",
+            "materialName": "glass_highior",
+            "position": [
+              0,
+              0,
+              0
+            ]
+          },
+          "Children": []
+        },
+        {
+          "Position": [
+            0.5,
+            0,
+            0
+          ],
+          "Scale": 0.75,
+          "Rotation": [
+            5,
+            0,
+            0
+          ],
+          "Solid": {
+            "$type": "triangle",
+            "v0": [ 0.0, -0.5, 2],
+            "v1": [1.0, -0.5, 4],
+            "v2": [0.75, 1.0, 2],
+            "materialName": "glass_lowior",
             "position": [
               0,
               0,

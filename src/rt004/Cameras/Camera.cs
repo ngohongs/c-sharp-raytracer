@@ -60,7 +60,7 @@ namespace rt004.Cameras
             Framebuffer framebuffer = new((int)width, (int)height);
 
             // Annouce render with resolution and samples and depth
-            Console.WriteLine($"Rendering {width}x{height} image with {Raytracer.SAMPLES_K} samples and {Raytracer.MAX_DEPTH} depth");
+            Console.WriteLine($"Rendering {width}x{height} image with {Raytracer.SAMPLES_K * Raytracer.SAMPLES_K} samples and {Raytracer.MAX_DEPTH} depth");
 
             Stopwatch sw = Stopwatch.StartNew();
 
